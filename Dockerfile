@@ -1,16 +1,10 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
-
-# Pehle pom copy karo taaki dependency cache ho
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Fir saara code copy karo
-COPY src ./src
+COPY .
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
+CMD ["sh", "-c", "java -jar app.jar --server.port=$PORT"]
