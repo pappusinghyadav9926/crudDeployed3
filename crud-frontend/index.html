@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pro CRUD Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+        input, select, button { padding: 10px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #28a745; color: white; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pro CRUD Dashboard</h1>
+        <input type="text" id="name" placeholder="Name">
+        <input type="email" id="email" placeholder="Email">
+        <input type="date" id="dob">
+        <select id="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+        <button onclick="addUser()">Add User</button>
+        <table id="userTable">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Email</th><th>DOB</th><th>Gender</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        // YAHAN APNA BACKEND URL DAALNA HAI
+        const API_URL = 'https://cruddeployed3-2.onrender.com/person';
+
+        async function loadUsers() {
+            const res = await fetch(API_URL);
+            const users = await res.json();
+            const tbody = document.querySelector('#userTable tbody');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                tbody.innerHTML += `<tr><td>${u.id}</td><td>${u.name}</td><td>${u.email}</td><td>${u.dob}</td><td>${u.gender}</td></tr>`;
+            });
+        }
+
+        async function addUser() {
+            const user = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                dob: document.getElementById('dob').value,
+                gender: document.getElementById('gender').value
+            };
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(user)
+            });
+            loadUsers();
+        }
+        loadUsers();
+    </script>
+</body>
+</html>
